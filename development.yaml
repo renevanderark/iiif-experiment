@@ -1,0 +1,45 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+      bindHost: localhost
+  adminConnectors:
+    - type: http
+      port: 8081
+  requestLog:
+    appenders:
+      - type: console
+
+logging:
+  appenders:
+    - type: console
+      logFormat: "- %-5p  %m [%c{60}]%n"
+  level: INFO
+  loggers:
+    "nl.kb.leveringsorkestratie.client.feeds.FeedClient": DEBUG
+
+cacheDir: "/home/rar010/research/iiif-experiment/cache"
+
+httpClient:
+  timeout: 5000ms
+  connectionTimeout: 5000ms
+  timeToLive: 1h
+  cookiesEnabled: false
+  maxConnections: 1024
+  maxConnectionsPerRoute: 1024
+  keepAlive: 0ms
+  retries: 3
+  tls:
+    verifyHostname: false
+    trustSelfSignedCertificates: true # WARNING!!! DO NOT USE IN PRODUCTION, USE SOMETHING LIKE THIS:
+#    protocol: TLSv1.2
+#    verifyHostname: true
+#    keyStorePath: /path/to/file
+#    keyStorePassword: changeit
+#    keyStoreType: JKS
+#    trustStorePath: /path/to/file
+#    trustStorePassword: changeit
+#    trustStoreType: JKS
+#    trustSelfSignedCertificates: false
+#    supportedProtocols: TLSv1.1,TLSv1.2
+#    supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
