@@ -67,6 +67,9 @@ public class ImageResource {
             final Jp2Header jp2Header = Jp2Header.read(cached);
             final Region region = Region.parseAndDetermine(regionParam, jp2Header.getX1(), jp2Header.getY1());
             final ScaleDims scaleDims = ScaleDims.parseAndDetermine(sizeParam, region);
+
+            // TODO: determine optimal cp_reduce by deriving actual scale & recalculate scaleDims accordingly
+
             final BufferedImage image = BufferedImageWriter.fromRaw(
                     Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), 0),
                     region.getW(), region.getH(),
