@@ -7,6 +7,7 @@ import nl.kb.iiif.core.ImageFetcher;
 import nl.kb.image.BufferedImageWriter;
 import nl.kb.jp2.Jp2Decode;
 import nl.kb.jp2.Jp2Header;
+import nl.kb.jp2.DimReducer;
 
 import javax.imageio.ImageIO;
 import javax.ws.rs.GET;
@@ -69,10 +70,18 @@ public class ImageResource {
             final ScaleDims scaleDims = ScaleDims.parseAndDetermine(sizeParam, region);
 
             // TODO: determine optimal cp_reduce by deriving actual scale & recalculate scaleDims accordingly
+            final double scale = (double) scaleDims.getW() / (double) region.getW();
+            int cp_reduce = 0;
+
+            if (scale <= 0.5) {
+              for (double s = 0.5; scale < s && cp_reduce < jp2Header.getNumRes() - 1; cp_reduce++, s *= 0.5) {
+              }
+            }
+            System.out.println("Derived scale: " + scale + " cp_reduce: " + cp_reduce);
 
             final BufferedImage image = BufferedImageWriter.fromRaw(
-                    Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), 0),
-                    region.getW(), region.getH(),
+                    Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce),
+                    DimReducer.reduce(region.getW(), cp_reduce), DimReducer.reduce(region.getH(), cp_reduce),
                     scaleDims.getW(), scaleDims.getH()
             );
 
