@@ -13,10 +13,8 @@ server:
 logging:
   appenders:
     - type: console
-      logFormat: "- %-5p  %m [%c{60}]%n"
   level: INFO
-  loggers:
-    "nl.kb.leveringsorkestratie.client.feeds.FeedClient": DEBUG
+
 
 cacheDir: "/home/rar010/research/iiif-experiment/cache"
 
