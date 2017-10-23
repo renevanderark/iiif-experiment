@@ -2,6 +2,9 @@ package nl.kb.iiif;
 
 import io.dropwizard.Application;
 import io.dropwizard.client.HttpClientBuilder;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.kb.iiif.core.ImageFetcher;
 import nl.kb.iiif.resources.ImageResource;
@@ -21,6 +24,17 @@ public class WebApp  extends Application<Config> {
     public static void main(String[] args) throws Exception {
         new WebApp().run(args);
     }
+
+
+    @Override
+    public void initialize(Bootstrap<Config> bootstrap) {
+        // Support ENV variables in configuration yaml files.
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false))
+        );
+    }
+
 
     @Override
     public void run(Config config, Environment environment) throws Exception {

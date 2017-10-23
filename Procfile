@@ -1,0 +1,1 @@
+web: java -jar target/iiif-jp2-1.0-SNAPSHOT.jar server config.yml

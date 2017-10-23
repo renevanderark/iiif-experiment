@@ -1,0 +1,31 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: ${PORT}
+  adminConnectors:
+    - type: http
+      port: 6555
+  requestLog:
+    appenders:
+      - type: console
+
+logging:
+  appenders:
+    - type: console
+  level: INFO
+
+
+cacheDir: "."
+
+httpClient:
+  timeout: 5000ms
+  connectionTimeout: 5000ms
+  timeToLive: 1h
+  cookiesEnabled: false
+  maxConnections: 1024
+  maxConnectionsPerRoute: 1024
+  keepAlive: 0ms
+  retries: 3
+  tls:
+    verifyHostname: false
+    trustSelfSignedCertificates: true # WARNING!!! DO NOT USE IN PRODUCTION, USE SOMETHING LIKE THIS:
