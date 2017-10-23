@@ -1,1 +1,1 @@
-web: java -Djava.io.tmpdir=. -jar target/iiif-jp2-1.0-SNAPSHOT.jar server config.yml
+web: java -Djava.io.tmpdir=. -jar target/iiif-jp2-1.0-SNAPSHOT.jar server config.yaml
