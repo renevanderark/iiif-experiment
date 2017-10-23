@@ -2,7 +2,7 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
-      bindHost: localhost
+      bindHost: 10.101.21.200
   adminConnectors:
     - type: http
       port: 8081
