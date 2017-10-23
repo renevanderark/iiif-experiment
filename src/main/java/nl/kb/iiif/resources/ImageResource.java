@@ -53,7 +53,10 @@ public class ImageResource {
             final File cached = imageFetcher.fetch(identifier);
             final Jp2Header jp2Header = Jp2Header.read(cached);
 
-            return Response.ok(new ImageInfo(jp2Header, uriInfo)).build();
+            return Response
+                    .ok(new ImageInfo(jp2Header, uriInfo))
+                    .header("Access-Control-Allow-Origin", "*")
+                    .build();
         } catch (IOException e) {
             imageFetcher.clear(identifier);
             throw e;
@@ -74,15 +77,14 @@ public class ImageResource {
             final Region region = Region.parseAndDetermine(regionParam, jp2Header.getX1(), jp2Header.getY1());
             final ScaleDims scaleDims = ScaleDims.parseAndDetermine(sizeParam, region);
 
-            // TODO: determine optimal cp_reduce by deriving actual scale & recalculate scaleDims accordingly
             final double scale = (double) scaleDims.getW() / (double) region.getW();
             int cp_reduce = 0;
 
             if (scale <= 0.5) {
               for (double s = 0.5; scale < s && cp_reduce < jp2Header.getNumRes() - 1; cp_reduce++, s *= 0.5) {
+                  // Leave empty
               }
             }
-            System.out.println("Derived scale: " + scale + " cp_reduce: " + cp_reduce);
 
             final BufferedImage image = BufferedImageWriter.fromRaw(
                     Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce),
