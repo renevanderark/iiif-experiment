@@ -69,4 +69,8 @@ public class Region {
     public int getH() {
         return h;
     }
+
+    public boolean isValid() {
+        return x >= 0 && y >= 0 && w > 0 && h > 0;
+    }
 }

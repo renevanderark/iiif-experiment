@@ -78,6 +78,10 @@ public class ImageResource {
             final ScaleDims scaleDims = ScaleDims.parseAndDetermine(sizeParam, region);
             final int deg = rotation.matches("^(90|180|270)$") ? Integer.parseInt(rotation) : 0;
 
+            if (!region.isValid() || !scaleDims.isValid()) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
             final double scale = (double) scaleDims.getW() / (double) region.getW();
             int cp_reduce = 0;
 

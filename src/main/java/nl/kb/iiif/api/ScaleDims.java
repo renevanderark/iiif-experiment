@@ -52,4 +52,8 @@ public class ScaleDims {
     public int getW() {
         return w;
     }
+
+    public boolean isValid() {
+        return w > 0 && h > 0;
+    }
 }
