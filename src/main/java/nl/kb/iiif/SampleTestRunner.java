@@ -64,7 +64,7 @@ public class SampleTestRunner {
             final int reducedW = reduce(w, cp_reduce);
             final int reducedH = reduce(h, cp_reduce);
             BufferedImage img = BufferedImageWriter
-                    .fromRaw(bands, reducedW, reducedH, (int)(reducedW * 0.1), (int)(reducedH * 0.1));
+                    .fromRaw(bands, reducedW, reducedH, (int)(reducedW * 0.1), (int)(reducedH * 0.1), 0);
 
             System.out.println(file + ": " + (System.currentTimeMillis() - before) + "ms: to buffered image");
             ImageIO.write(img, "jpg", new File("output/" +

@@ -15,7 +15,7 @@ logging:
   level: INFO
 
 
-cacheDir: "."
+cacheDir: "/home/rar010/research/iiif-experiment/cache"
 
 httpClient:
   timeout: 5000ms

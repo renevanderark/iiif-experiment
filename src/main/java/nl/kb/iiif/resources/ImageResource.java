@@ -76,6 +76,7 @@ public class ImageResource {
             final Jp2Header jp2Header = Jp2Header.read(cached);
             final Region region = Region.parseAndDetermine(regionParam, jp2Header.getX1(), jp2Header.getY1());
             final ScaleDims scaleDims = ScaleDims.parseAndDetermine(sizeParam, region);
+            final int deg = rotation.matches("^(90|180|270)$") ? Integer.parseInt(rotation) : 0;
 
             final double scale = (double) scaleDims.getW() / (double) region.getW();
             int cp_reduce = 0;
@@ -89,7 +90,7 @@ public class ImageResource {
             final BufferedImage image = BufferedImageWriter.fromRaw(
                     Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce),
                     DimReducer.reduce(region.getW(), cp_reduce), DimReducer.reduce(region.getH(), cp_reduce),
-                    scaleDims.getW(), scaleDims.getH()
+                    scaleDims.getW(), scaleDims.getH(), deg
             );
 
             final JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
