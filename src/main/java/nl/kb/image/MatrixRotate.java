@@ -14,27 +14,52 @@ class MatrixRotate {
         }
     }
 
+    static int[] rotate(int x, int y, int width, int height, int deg) {
+        switch (deg) {
+            case 90:
+                return rot90(x, y, width, height);
+            case 180:
+                return rot180(x, y, width, height);
+            case 270:
+                return rot270(x, y, width, height);
+            default:
+                return new int[]{ x, y };
+        }
+    }
+
     /* = 270 counter clockwise (height becomes width) */
     private static int rot90(int offset, int width, int height) {
         int y = (int) Math.floor(offset / width);
         int x = offset - (y * width);
-        int transX = -y + (height - 1);
-        return x * height + transX;
+        final int[] rot90 = rot90(x, y, width, height);
+        return rot90[1] * height + rot90[0];
     }
 
     private static int rot180(int offset, int width, int height) {
         int y = (int) Math.floor(offset / width);
         int x = offset - (y * width);
-        int transY = -y + (height - 1);
-        int transX = -x + (width - 1);
-        return transY * width + transX;
+        final int[] rot180 = rot180(x, y, width, height);
+        return rot180[1] * width + rot180[0];
     }
 
     /* = 90 counter clockwise (height becomes width) */
     private static int rot270(int offset, int width, int height) {
         int y = (int) Math.floor(offset / width);
         int x = offset - (y * width);
-        int transY = -x + (width - 1);
-        return transY * height + y;
+        final int[] rot270 = rot270(x, y, width, height);
+
+        return rot270[1] * height + rot270[0];
+    }
+
+    private static int[] rot90(int x, int y, int width, int height) {
+        return new int[] { -y + (height - 1), x };
+    }
+
+    private static int[] rot180(int x, int y, int width, int height) {
+        return new int[] { -x + (width - 1), -y + (height - 1) };
+    }
+
+    private static int[] rot270(int x, int y, int width, int height) {
+        return new int[] { y, -x + (width - 1) };
     }
 }

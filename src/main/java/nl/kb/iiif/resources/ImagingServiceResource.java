@@ -75,17 +75,44 @@ public class ImagingServiceResource extends ImageResource {
                     setScaleFromWidthParam(scaleDims, wParam, jp2Header);
                 }
             }
-        } else if (sParam != null) {
+        } else {
+            sParam = sParam == null ? 1.0 : sParam;
             final int requestedX = xParam == null ? 0 : xParam;
             final int requestedY = yParam == null ? 0 : yParam;
             final int requestedW = wParam == null ? (int) Math.round(jp2Header.getX1() * sParam) : wParam;
             final int requestedH = hParam == null ? (int) Math.round(jp2Header.getY1() * sParam) : hParam;
-            final int derivedRegionW = Math.min((int) Math.round(requestedW / sParam), jp2Header.getX1());
-            final int derivedRegionH = Math.min((int) Math.round(requestedH / sParam), jp2Header.getY1());
+
+            final int scaledRequestedW = (int) Math.round(requestedW / sParam);
+            final int scaledRequestedH = (int) Math.round(requestedH / sParam);
             final int requestedRegionX = (int) Math.round(requestedX / sParam);
             final int requestedRegionY = (int) Math.round(requestedY / sParam);
-            final int derivedRegionX = requestedRegionX + derivedRegionW > jp2Header.getX1() ? 0 : requestedRegionX;
-            final int derivedRegionY = requestedRegionY + derivedRegionH > jp2Header.getY1() ? 0 : requestedRegionY;
+
+            int derivedRegionW = Math.min(scaledRequestedW, jp2Header.getX1());
+            int derivedRegionH = Math.min(scaledRequestedH, jp2Header.getY1());
+            int derivedRegionX;
+            int derivedRegionY;
+
+            if (requestedRegionX + derivedRegionW > jp2Header.getX1()) {
+                if (jp2Header.getX1() - scaledRequestedW >= 0) {
+                    derivedRegionX = jp2Header.getX1() - scaledRequestedW;
+                    derivedRegionW = scaledRequestedW;
+                } else {
+                    derivedRegionX = 0;
+                }
+            } else {
+                derivedRegionX = requestedRegionX;
+            }
+
+            if (requestedRegionY + derivedRegionH > jp2Header.getY1()) {
+                if (jp2Header.getY1() - scaledRequestedH >= 0) {
+                    derivedRegionY = jp2Header.getY1() - scaledRequestedH;
+                    derivedRegionH = scaledRequestedH;
+                } else {
+                    derivedRegionY = 0;
+                }
+            } else {
+                derivedRegionY = requestedRegionY;
+            }
 
             scaleDims.setW((int) Math.round(derivedRegionW * sParam));
             scaleDims.setH((int) Math.round(derivedRegionH * sParam));
@@ -93,10 +120,7 @@ public class ImagingServiceResource extends ImageResource {
             region.setH(derivedRegionH);
             region.setX(derivedRegionX);
             region.setY(derivedRegionY);
-        } else {
-            throw new UnsupportedOperationException();
         }
-
     }
 
     private void setScaleFromHeightParam(ScaleDims scaleDims, Integer hParam, Jp2Header jp2Header) {
