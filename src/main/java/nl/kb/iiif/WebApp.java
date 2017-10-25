@@ -7,7 +7,8 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.kb.iiif.core.ImageFetcher;
-import nl.kb.iiif.resources.ImageResource;
+import nl.kb.iiif.resources.IIIFServiceResource;
+import nl.kb.iiif.resources.ImagingServiceResource;
 import nl.kb.utils.NativeUtils;
 import org.apache.http.client.HttpClient;
 
@@ -45,7 +46,9 @@ public class WebApp  extends Application<Config> {
                 .build(getName());
 
 
-        environment.jersey().register(new ImageResource(new ImageFetcher(httpClient, config.getCacheDir())));
+        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, config.getCacheDir());
+        environment.jersey().register(new IIIFServiceResource(imageFetcher));
+        environment.jersey().register(new ImagingServiceResource(imageFetcher));
         // TODO add cache expirer job
     }
 

@@ -1,6 +1,7 @@
 package nl.kb.iiif.api;
 
 import com.google.common.collect.Lists;
+import nl.kb.jp2.Jp2Header;
 
 public class ScaleDims {
     @Override
@@ -11,8 +12,13 @@ public class ScaleDims {
                 '}';
     }
 
-    private final int h;
-    private final int w;
+    private int h;
+    private int w;
+
+    public ScaleDims(Jp2Header jp2Header) {
+        h = jp2Header.getY1();
+        w = jp2Header.getX1();
+    }
 
     private ScaleDims(int w, int h) {
         this.w = w;
@@ -55,5 +61,13 @@ public class ScaleDims {
 
     public boolean isValid() {
         return w > 0 && h > 0;
+    }
+
+    public void setW(Integer w) {
+        this.w = w;
+    }
+
+    public void setH(int h) {
+        this.h = h;
     }
 }

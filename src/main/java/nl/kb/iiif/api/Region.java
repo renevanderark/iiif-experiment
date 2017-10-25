@@ -1,10 +1,12 @@
 package nl.kb.iiif.api;
 
+import nl.kb.jp2.Jp2Header;
+
 public class Region {
-    private final int x;
-    private final int y;
-    private final int w;
-    private final int h;
+    private int x;
+    private int y;
+    private int w;
+    private int h;
 
     @Override
     public String toString() {
@@ -14,6 +16,13 @@ public class Region {
                 ", w=" + w +
                 ", h=" + h +
                 '}';
+    }
+
+    public Region(Jp2Header jp2Header) {
+        x = 0;
+        y = 0;
+        w = jp2Header.getX1();
+        h = jp2Header.getY1();
     }
 
     private Region(int x, int y, int w, int h) {
@@ -72,5 +81,21 @@ public class Region {
 
     public boolean isValid() {
         return x >= 0 && y >= 0 && w > 0 && h > 0;
+    }
+
+    public void setW(int w) {
+        this.w = w;
+    }
+
+    public void setH(int h) {
+        this.h = h;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
