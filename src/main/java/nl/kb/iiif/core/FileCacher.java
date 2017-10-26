@@ -3,11 +3,26 @@ package nl.kb.iiif.core;
 import java.io.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Base64;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import java.time.LocalTime;
 
 public class FileCacher {
 
   @JsonProperty("dir")
   private String cacheDir;
+
+  private class CacheStats {
+    LocalTime lastAccess;
+    Long fileSize;
+
+    CacheStats(Long fileSize) {
+      this.lastAccess = LocalTime.now();
+      this.fileSize = fileSize;
+    }
+  }
+
+  private final Map<String, CacheStats> cacheMap = new ConcurrentHashMap<>();
 
   public String getCacheDir() {
     return cacheDir;
@@ -15,7 +30,11 @@ public class FileCacher {
 
   public File fetchLocal(String identifier) {
     final String filename = new String(Base64.getEncoder().encode(identifier.getBytes()));
-    return new File(String.format("%s/%s", cacheDir, filename));
+    final File file = new File(String.format("%s/%s", cacheDir, filename));
+    if (file.exists()) {
+      cacheMap.put(filename, new CacheStats(file.length()));
+    }
+    return file;
   }
 
   public void clear(String identifier) {
@@ -23,6 +42,7 @@ public class FileCacher {
       final File file = new File(String.format("%s/%s", cacheDir, filename));
       if (file.exists()) {
           file.delete();
+          cacheMap.remove(filename);
       }
   }
 }
