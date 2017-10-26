@@ -24,6 +24,11 @@ public class FileCacher {
       this.lastAccess = LocalTime.now();
       this.fileSize = fileSize;
     }
+
+    @Override
+    public String toString() {
+      return String.format("lastAccess=%s, fileSize=%d", lastAccess.toString(), fileSize);
+    }
   }
 
   private final Map<String, CacheStats> cacheMap = new ConcurrentHashMap<>();
@@ -43,6 +48,7 @@ public class FileCacher {
 
   public void save(InputStream is, File file) throws IOException {
     IOUtils.copy(is, new FileOutputStream(file));
+    cacheMap.put(file.getName(), new CacheStats(file.length()));
   }
 
   public void clear(String identifier) {
