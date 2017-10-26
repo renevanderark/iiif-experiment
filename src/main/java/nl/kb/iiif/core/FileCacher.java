@@ -6,6 +6,10 @@ import java.util.Base64;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.time.LocalTime;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import org.apache.commons.io.IOUtils;
 
 public class FileCacher {
 
@@ -35,6 +39,10 @@ public class FileCacher {
       cacheMap.put(filename, new CacheStats(file.length()));
     }
     return file;
+  }
+
+  public void save(InputStream is, File file) throws IOException {
+    IOUtils.copy(is, new FileOutputStream(file));
   }
 
   public void clear(String identifier) {

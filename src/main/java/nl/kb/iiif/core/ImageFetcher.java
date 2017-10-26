@@ -1,12 +1,10 @@
 package nl.kb.iiif.core;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -29,7 +27,7 @@ public class ImageFetcher {
         }
 
         final HttpResponse resp = httpClient.execute(new HttpGet(String.format("http://resolver.kb.nl/resolve?urn=%s", identifier)));
-        IOUtils.copy(resp.getEntity().getContent(), new FileOutputStream(file));
+        fileCacher.save(resp.getEntity().getContent(), file);
 
         return file;
     }
