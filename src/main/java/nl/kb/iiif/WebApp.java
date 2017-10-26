@@ -46,7 +46,7 @@ public class WebApp  extends Application<Config> {
                 .build(getName());
 
 
-        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, config.getCacheDir());
+        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, config.getFileCacher());
         environment.jersey().register(new IIIFServiceResource(imageFetcher));
         environment.jersey().register(new ImagingServiceResource(imageFetcher));
         // TODO add cache expirer job

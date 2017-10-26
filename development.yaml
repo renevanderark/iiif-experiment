@@ -2,7 +2,6 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
-      bindHost: 10.101.21.200
   adminConnectors:
     - type: http
       port: 8081
@@ -16,7 +15,9 @@ logging:
   level: INFO
 
 
-cacheDir: "/home/rar010/research/iiif-experiment/cache"
+cache:
+  dir: "/home/rar010/research/iiif-experiment/cache"
+
 
 httpClient:
   timeout: 5000ms

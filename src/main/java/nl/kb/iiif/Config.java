@@ -6,11 +6,13 @@ import io.dropwizard.client.HttpClientConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import nl.kb.iiif.core.FileCacher;
 
 class Config extends Configuration {
 
     @NotNull
-    private String cacheDir;
+    @JsonProperty("cache")
+    private FileCacher fileCacher;
 
     @Valid
     @NotNull
@@ -21,7 +23,7 @@ class Config extends Configuration {
         return httpClientConfiguration;
     }
 
-    public String getCacheDir() {
-        return cacheDir;
+    public FileCacher getFileCacher() {
+        return fileCacher;
     }
 }

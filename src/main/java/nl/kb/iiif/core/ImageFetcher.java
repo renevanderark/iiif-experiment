@@ -14,9 +14,9 @@ public class ImageFetcher {
     private final HttpClient httpClient;
     private final String cacheDir;
 
-    public ImageFetcher(HttpClient httpClient, String cacheDir) {
+    public ImageFetcher(HttpClient httpClient, FileCacher fileCacher) {
         this.httpClient = httpClient;
-        this.cacheDir = cacheDir;
+        this.cacheDir = fileCacher.getCacheDir();
         //TODO: add cache expirer
     }
 
