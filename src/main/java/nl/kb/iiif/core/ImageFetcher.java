@@ -12,18 +12,17 @@ import java.util.Base64;
 
 public class ImageFetcher {
     private final HttpClient httpClient;
-    private final String cacheDir;
+    private final FileCacher fileCacher;
 
     public ImageFetcher(HttpClient httpClient, FileCacher fileCacher) {
         this.httpClient = httpClient;
-        this.cacheDir = fileCacher.getCacheDir();
+        this.fileCacher = fileCacher;
         //TODO: add cache expirer
     }
 
 
     public File fetch(String identifier) throws IOException {
-        final String filename = new String(Base64.getEncoder().encode(identifier.getBytes()));
-        final File file = new File(String.format("%s/%s", cacheDir, filename));
+        final File file = fileCacher.fetchLocal(identifier);
         if (file.exists()) {
             // TODO BUMP TIMEOUT
             return file;
@@ -36,10 +35,6 @@ public class ImageFetcher {
     }
 
     public void clear(String identifier) {
-        final String filename = new String(Base64.getEncoder().encode(identifier.getBytes()));
-        final File file = new File(String.format("%s/%s", cacheDir, filename));
-        if (file.exists()) {
-            file.delete();
-        }
+        fileCacher.clear(identifier);
     }
 }
