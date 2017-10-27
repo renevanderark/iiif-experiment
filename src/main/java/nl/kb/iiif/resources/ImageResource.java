@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 class ImageResource {
 
@@ -56,6 +58,10 @@ class ImageResource {
                 // ignores broken pipes when peer closes connection early
             }
         };
-        return Response.ok(stream).build();
+        return Response
+                .ok(stream)
+                .header("Cache-Control", "public, max-age=3600")
+                .header("Expires", ZonedDateTime.now().plusHours(1).format(DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")))
+                .build();
     }
 }
