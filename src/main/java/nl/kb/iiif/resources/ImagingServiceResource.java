@@ -48,7 +48,7 @@ public class ImagingServiceResource extends ImageResource {
 
             // TODO apply rotation using MatrixRotate on all dimension params ...
 
-            interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, jp2Header);
+            interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, rParam, jp2Header);
 
             return getJpegResponse(jp2Header, region, scaleDims, 0);
 
@@ -62,7 +62,7 @@ public class ImagingServiceResource extends ImageResource {
 
     private void interpretParams(ScaleDims scaleDims, Region region,
                                  Integer xParam, Integer yParam, Integer wParam, Integer hParam, Double sParam,
-                                 Jp2Header jp2Header) {
+                                 Integer rParam, Jp2Header jp2Header) {
 
         // TODO: integrate current if-blocks
         // TODO: ...then apply apply rotation using MatrixRotate on the requested[XYWH] params...
@@ -75,6 +75,9 @@ public class ImagingServiceResource extends ImageResource {
         // 3) derive the scale based on the rotated region and the unrotated source image
         // 4) decode this region
         // 5) rotate this decoded region again
+
+
+
         if (xParam == null && yParam == null && sParam == null) {
             if (hParam == null && wParam == null) {
                 return;

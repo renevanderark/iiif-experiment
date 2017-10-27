@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.Map;
@@ -27,11 +28,11 @@ public class FileCacher {
     private Long maxSizeMB;
 
     private class CacheStats {
-        LocalTime lastAccess;
+        LocalDateTime lastAccess;
         Long fileSize;
 
         CacheStats(Long fileSize) {
-            this.lastAccess = LocalTime.now();
+            this.lastAccess = LocalDateTime.now();
             this.fileSize = fileSize;
         }
 
@@ -67,12 +68,12 @@ public class FileCacher {
     }
 
     void expire() {
-        cacheMap.entrySet().stream()
-                .filter(entry -> entry.getValue().lastAccess.isBefore(LocalTime.now().minusMinutes(expireMinutes)))
-                .forEach(entry -> clear(entry.getKey(), false));
-
         long currentSize = cacheMap.values().stream().mapToLong(x -> x.fileSize).sum();
         final long maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+        cacheMap.entrySet().stream()
+                .filter(entry -> Duration.between(entry.getValue().lastAccess, LocalDateTime.now()).toMinutes() > expireMinutes)
+                .forEach(entry -> clear(entry.getKey(), false));
 
         if (currentSize >= maxSizeBytes) {
 

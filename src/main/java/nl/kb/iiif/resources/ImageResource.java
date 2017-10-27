@@ -14,8 +14,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 class ImageResource {
@@ -43,14 +43,19 @@ class ImageResource {
 
         final JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
         final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         jpegParams.setCompressionQuality(1f);
 
-        writer.setOutput(new MemoryCacheImageOutputStream(baos));
-        writer.write(null, new IIOImage(image, null, null), jpegParams);
 
-        return Response.ok(baos.toByteArray()).build();
+        final StreamingOutput stream = os -> {
+            writer.setOutput(new MemoryCacheImageOutputStream(os));
+            try {
+                writer.write(null, new IIOImage(image, null, null), jpegParams);
+            } catch (IOException ignored) {
+                // ignores broken pipes when peer closes connection early
+            }
+        };
+        return Response.ok(stream).build();
     }
 }
