@@ -23,24 +23,19 @@ public class ImagingServiceResource extends ImageResource {
     @GET
     public Response get(
             @QueryParam("id") String identifier,
-            @QueryParam("x") Integer xParam,
-            @QueryParam("y") Integer yParam,
-            @QueryParam("w") Integer wParam,
-            @QueryParam("h") Integer hParam,
+            @QueryParam("x") Double xParam,
+            @QueryParam("y") Double yParam,
+            @QueryParam("w") Double wParam,
+            @QueryParam("h") Double hParam,
             @QueryParam("s") Double sParam,
-            @QueryParam("r") Integer rParam,
+            @QueryParam("r") Double rParam,
             @QueryParam("c") String cParam,
             @QueryParam("f") String fParam
     ) {
-/*
         if (cParam != null && cParam.equals("imghead")) {
-            if (fParam != null && fParam.equals("plain")) {
-
-            } else {
-                return
-            }
+            // TODO
+            return Response.noContent().build();
         }
-*/
 
         try {
             final File cached = imageFetcher.fetch(identifier);
@@ -48,9 +43,16 @@ public class ImagingServiceResource extends ImageResource {
             final ScaleDims scaleDims = new ScaleDims(jp2Header);
             final Region region = new Region(jp2Header);
 
-            interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, rParam, jp2Header);
+            interpretParams(scaleDims, region,
+                    xParam == null ? null : (int) Math.round(xParam),
+                    yParam == null ? null : (int) Math.round(yParam),
+                    wParam == null ? null : (int) Math.round(wParam),
+                    hParam == null ? null : (int) Math.round(hParam),
+                    sParam,
+                    rParam == null ? null : rParam.intValue(),
+                    jp2Header);
 
-            return getJpegResponse(jp2Header, region, scaleDims, rParam);
+            return getJpegResponse(jp2Header, region, scaleDims, rParam == null ? 0 : rParam.intValue());
 
         } catch (IOException e) {
             imageFetcher.clear(identifier);

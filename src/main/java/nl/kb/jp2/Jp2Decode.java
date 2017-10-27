@@ -13,9 +13,11 @@ public class Jp2Decode {
         }
         decodeJp2Area(jp2Header.getFileName(), x, y, w, h, cp_reduce, colorBands);
 
+        // TODO: rewrite to return also width/height (size/width) of decoded image
         return colorBands;
     }
 
+    // TODO: rewrite to return width of decoded image
     private static native void decodeJp2Area(String filename,
                                              int x, int y, int w, int h, int cp_reduce,
                                              int[][] colorBands) throws IOException;

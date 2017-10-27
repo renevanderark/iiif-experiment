@@ -37,8 +37,10 @@ class ImageResource {
             }
         }
 
+        // TODO: get exact width/height of decoded image via a return object... pass those along to fromRaw
+        final int[][] colorBands = Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce);
         final BufferedImage image = BufferedImageWriter.fromRaw(
-                Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce),
+                colorBands,
                 DimReducer.reduce(region.getW(), cp_reduce), DimReducer.reduce(region.getH(), cp_reduce),
                 scaleDims.getW(), scaleDims.getH(), deg
         );

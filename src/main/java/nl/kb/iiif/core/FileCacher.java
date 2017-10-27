@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.stream.Collectors.toSet;
 
 public class FileCacher {
-
+    // TODO: add lock and wait for parallel requests trying to access a file still being written.
     @JsonProperty("dir")
     private String cacheDir;
 
