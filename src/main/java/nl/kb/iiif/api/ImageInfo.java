@@ -39,7 +39,6 @@ public class ImageInfo {
     }
 
     private List<Tile> makeTiles(Jp2Header jp2Header) {
-        System.out.println(jp2Header);
         return Lists.newArrayList(
                 new Tile(jp2Header.getTdx(), jp2Header.getTdy(), jp2Header.getNumRes())
         );

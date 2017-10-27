@@ -25,7 +25,7 @@ public class Region {
         h = jp2Header.getY1();
     }
 
-    private Region(int x, int y, int w, int h) {
+    public Region(int x, int y, int w, int h) {
 
         this.x = x;
         this.y = y;
@@ -97,5 +97,33 @@ public class Region {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Region rotatedForRequest(Jp2Header jp2Header, int rParam) {
+        switch (rParam) {
+            case 90:
+                return new Region(
+                        this.y,
+                        jp2Header.getY1() - (this.x + this.w),
+                        this.h,
+                        this.w
+                );
+            case 180:
+                return new Region(
+                        jp2Header.getX1() - (this.x + this.w),
+                        jp2Header.getY1() - (this.y + this.h),
+                        this.w,
+                        this.h
+                );
+            case 270:
+                return new Region(
+                        jp2Header.getX1() - (this.y + this.h),
+                        this.x,
+                        this.h,
+                        this.w
+                );
+            default:
+                return this;
+        }
     }
 }

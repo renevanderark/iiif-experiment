@@ -32,25 +32,15 @@ public class ImagingServiceResource extends ImageResource {
             @QueryParam("s") Double sParam,
             @QueryParam("r") Integer rParam
     ) {
-        System.out.println(identifier);
-        System.out.println(xParam);
-        System.out.println(yParam);
-        System.out.println(wParam);
-        System.out.println(hParam);
-        System.out.println(sParam);
-        System.out.println(rParam);
-
         try {
             final File cached = imageFetcher.fetch(identifier);
             final Jp2Header jp2Header = Jp2Header.read(cached);
             final ScaleDims scaleDims = new ScaleDims(jp2Header);
             final Region region = new Region(jp2Header);
 
-            // TODO apply rotation using MatrixRotate on all dimension params ...
-
             interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, rParam, jp2Header);
 
-            return getJpegResponse(jp2Header, region, scaleDims, 0);
+            return getJpegResponse(jp2Header, region, scaleDims, rParam);
 
         } catch (IOException e) {
             imageFetcher.clear(identifier);
@@ -64,45 +54,25 @@ public class ImagingServiceResource extends ImageResource {
                                  Integer xParam, Integer yParam, Integer wParam, Integer hParam, Double sParam,
                                  Integer rParam, Jp2Header jp2Header) {
 
-        // TODO: integrate current if-blocks
-        // TODO: ...then apply apply rotation using MatrixRotate on the requested[XYWH] params...
-        // TODO: ...but before deriving any scale from them !!
-        // TODO: ...and DEFINITELY before checking any bounding-box restrictions!
-
-        // ORDER OF OPERERATIONS is:
-        // 1) rotate the region to be decoded using MatrixRotate
-        // 2) the w and h properties should be swapped (if rot=90|270), because they are 'rotated back' afterwards.
-        // 3) derive the scale based on the rotated region and the unrotated source image
-        // 4) decode this region
-        // 5) rotate this decoded region again
-
-
-
         if (xParam == null && yParam == null && sParam == null) {
-            if (hParam == null && wParam == null) {
-                return;
-            } if (hParam == null) {
-                setScaleFromWidthParam(scaleDims, wParam, jp2Header);
-            } else if (wParam == null) {
-                setScaleFromHeightParam(scaleDims, hParam, jp2Header);
-            } else {
-                if (hParam < wParam) {
-                    setScaleFromHeightParam(scaleDims, hParam, jp2Header);
-                } else {
-                    setScaleFromWidthParam(scaleDims, wParam, jp2Header);
-                }
-            }
+            interpretFullRegionParams(scaleDims, wParam, hParam, rParam, jp2Header);
         } else {
+            rParam = rParam == null ? 0 : rParam;
             sParam = sParam == null ? 1.0 : sParam;
             final int requestedX = xParam == null ? 0 : xParam;
             final int requestedY = yParam == null ? 0 : yParam;
             final int requestedW = wParam == null ? (int) Math.round(jp2Header.getX1() * sParam) : wParam;
             final int requestedH = hParam == null ? (int) Math.round(jp2Header.getY1() * sParam) : hParam;
 
-            final int scaledRequestedW = (int) Math.round(requestedW / sParam);
-            final int scaledRequestedH = (int) Math.round(requestedH / sParam);
-            final int requestedRegionX = (int) Math.round(requestedX / sParam);
-            final int requestedRegionY = (int) Math.round(requestedY / sParam);
+            final Region rotatedRegion = new Region(
+                    (int) Math.round(requestedX / sParam), (int) Math.round(requestedY / sParam),
+                    (int) Math.round(requestedW / sParam), (int) Math.round(requestedH / sParam))
+                    .rotatedForRequest(jp2Header, rParam);
+
+            final int scaledRequestedW = rotatedRegion.getW();
+            final int scaledRequestedH = rotatedRegion.getH();
+            final int requestedRegionX = rotatedRegion.getX();
+            final int requestedRegionY = rotatedRegion.getY();
 
             int derivedRegionW = Math.min(scaledRequestedW, jp2Header.getX1());
             int derivedRegionH = Math.min(scaledRequestedH, jp2Header.getY1());
@@ -137,6 +107,39 @@ public class ImagingServiceResource extends ImageResource {
             region.setH(derivedRegionH);
             region.setX(derivedRegionX);
             region.setY(derivedRegionY);
+        }
+    }
+
+    private void interpretFullRegionParams(ScaleDims scaleDims, Integer wParam, Integer hParam, Integer rParam, Jp2Header jp2Header) {
+        if (hParam == null && wParam == null) {
+            return;
+        }
+        if (hParam == null) {
+            if (rParam == 90 || rParam == 270) {
+                setScaleFromHeightParam(scaleDims, wParam, jp2Header);
+            } else {
+                setScaleFromWidthParam(scaleDims, wParam, jp2Header);
+            }
+        } else if (wParam == null) {
+            if (rParam == 90 || rParam == 270) {
+                setScaleFromWidthParam(scaleDims, hParam, jp2Header);
+            } else {
+                setScaleFromHeightParam(scaleDims, hParam, jp2Header);
+            }
+        } else {
+            if (hParam < wParam) {
+                if (rParam == 90 || rParam == 270) {
+                    setScaleFromWidthParam(scaleDims, hParam, jp2Header);
+                } else {
+                    setScaleFromHeightParam(scaleDims, hParam, jp2Header);
+                }
+            } else {
+                if (rParam == 90 || rParam == 270) {
+                    setScaleFromHeightParam(scaleDims, wParam, jp2Header);
+                } else {
+                    setScaleFromWidthParam(scaleDims, wParam, jp2Header);
+                }
+            }
         }
     }
 

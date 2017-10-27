@@ -1,6 +1,6 @@
 package nl.kb.image;
 
-class MatrixRotate {
+public class MatrixRotate {
     static int rotate(int offset, int width, int height, int deg) {
         switch (deg) {
             case 90:
@@ -11,19 +11,6 @@ class MatrixRotate {
                 return rot270(offset, width, height);
             default:
                 return offset;
-        }
-    }
-
-    static int[] rotate(int x, int y, int width, int height, int deg) {
-        switch (deg) {
-            case 90:
-                return rot90(x, y, width, height);
-            case 180:
-                return rot180(x, y, width, height);
-            case 270:
-                return rot270(x, y, width, height);
-            default:
-                return new int[]{ x, y };
         }
     }
 
