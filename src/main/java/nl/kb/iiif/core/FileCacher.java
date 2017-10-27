@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.stream.Collectors.toSet;
 
 public class FileCacher {
 
@@ -19,6 +22,9 @@ public class FileCacher {
 
     @JsonProperty
     private Integer expireMinutes;
+
+    @JsonProperty
+    private Long maxSizeMB;
 
     private class CacheStats {
         LocalTime lastAccess;
@@ -37,11 +43,7 @@ public class FileCacher {
 
     private final Map<String, CacheStats> cacheMap = new ConcurrentHashMap<>();
 
-    public String getCacheDir() {
-        return cacheDir;
-    }
-
-    public File fetchLocal(String identifier) {
+    File fetchLocal(String identifier) {
         final String filename = new String(Base64.getEncoder().encode(identifier.getBytes()));
         final File file = new File(String.format("%s/%s", cacheDir, filename));
         if (file.exists()) {
@@ -67,8 +69,23 @@ public class FileCacher {
     void expire() {
         cacheMap.entrySet().stream()
                 .filter(entry -> entry.getValue().lastAccess.isBefore(LocalTime.now().minusMinutes(expireMinutes)))
-                .forEach(entry -> {
-                    clear(entry.getKey(), false);
-                });
+                .forEach(entry -> clear(entry.getKey(), false));
+
+        long currentSize = cacheMap.values().stream().mapToLong(x -> x.fileSize).sum();
+        final long maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+        if (currentSize >= maxSizeBytes) {
+
+            for (Map.Entry<String, CacheStats> entry : cacheMap.entrySet().stream()
+                    .sorted(Comparator.comparing(a -> a.getValue().lastAccess))
+                    .collect(toSet())) {
+
+                clear(entry.getKey(), false);
+                currentSize -= entry.getValue().fileSize;
+                if (currentSize < maxSizeBytes) {
+                    break;
+                }
+            }
+        }
     }
 }

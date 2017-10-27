@@ -18,7 +18,8 @@ logging:
 
 cache:
   dir: "/home/rar010/research/iiif-experiment/cache"
-  expireMinutes: 1
+  expireMinutes: 600000
+  maxSizeMB: 1024
 
 httpClient:
   timeout: 5000ms
