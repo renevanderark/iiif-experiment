@@ -7,7 +7,6 @@ import nl.kb.jp2.Jp2Header;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -22,7 +21,6 @@ public class ImagingServiceResource extends ImageResource {
     }
 
     @GET
-    @Produces("image/jpeg")
     public Response get(
             @QueryParam("id") String identifier,
             @QueryParam("x") Integer xParam,
@@ -30,8 +28,20 @@ public class ImagingServiceResource extends ImageResource {
             @QueryParam("w") Integer wParam,
             @QueryParam("h") Integer hParam,
             @QueryParam("s") Double sParam,
-            @QueryParam("r") Integer rParam
+            @QueryParam("r") Integer rParam,
+            @QueryParam("c") String cParam,
+            @QueryParam("f") String fParam
     ) {
+/*
+        if (cParam != null && cParam.equals("imghead")) {
+            if (fParam != null && fParam.equals("plain")) {
+
+            } else {
+                return
+            }
+        }
+*/
+
         try {
             final File cached = imageFetcher.fetch(identifier);
             final Jp2Header jp2Header = Jp2Header.read(cached);

@@ -102,22 +102,26 @@ public class Region {
     public Region rotatedForRequest(Jp2Header jp2Header, int rParam) {
         switch (rParam) {
             case 90:
+                final int newY90 = jp2Header.getY1() - (this.x + this.w);
                 return new Region(
                         this.y,
-                        jp2Header.getY1() - (this.x + this.w),
+                        newY90 < 0 ? 0 : newY90,
                         this.h,
                         this.w
                 );
             case 180:
+                final int newX180 = jp2Header.getX1() - (this.x + this.w);
+                final int newY180 = jp2Header.getY1() - (this.y + this.h);
                 return new Region(
-                        jp2Header.getX1() - (this.x + this.w),
-                        jp2Header.getY1() - (this.y + this.h),
+                        newX180 < 0 ? 0 : newX180,
+                        newY180 < 0 ? 0 : newY180,
                         this.w,
                         this.h
                 );
             case 270:
+                final int newX270 = jp2Header.getX1() - (this.y + this.h);
                 return new Region(
-                        jp2Header.getX1() - (this.y + this.h),
+                        newX270 < 0 ? 0 : newX270,
                         this.x,
                         this.h,
                         this.w

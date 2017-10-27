@@ -60,6 +60,7 @@ class ImageResource {
         };
         return Response
                 .ok(stream)
+                .header("Content-type", "image/jpeg")
                 .header("Cache-Control", "public, max-age=3600")
                 .header("Expires", ZonedDateTime.now().plusHours(1).format(DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")))
                 .build();
