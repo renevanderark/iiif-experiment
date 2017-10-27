@@ -6,7 +6,6 @@ import org.apache.http.client.methods.HttpGet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 
 public class ImageFetcher {
     private final HttpClient httpClient;
@@ -33,6 +32,6 @@ public class ImageFetcher {
     }
 
     public void clear(String identifier) {
-        fileCacher.clear(identifier);
+        fileCacher.clear(identifier, true);
     }
 }

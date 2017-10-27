@@ -6,6 +6,8 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import nl.kb.iiif.core.CacheCleanerTask;
+import nl.kb.iiif.core.FileCacher;
 import nl.kb.iiif.core.ImageFetcher;
 import nl.kb.iiif.resources.IIIFServiceResource;
 import nl.kb.iiif.resources.ImagingServiceResource;
@@ -46,10 +48,12 @@ public class WebApp  extends Application<Config> {
                 .build(getName());
 
 
-        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, config.getFileCacher());
+        final FileCacher fileCacher = config.getFileCacher();
+        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, fileCacher);
         environment.jersey().register(new IIIFServiceResource(imageFetcher));
         environment.jersey().register(new ImagingServiceResource(imageFetcher));
-        // TODO add cache expirer job
+
+        environment.lifecycle().manage(new ManagedPeriodicTask(new CacheCleanerTask(fileCacher)));
     }
 
 

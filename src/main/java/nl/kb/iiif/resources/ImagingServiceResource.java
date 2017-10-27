@@ -45,8 +45,10 @@ public class ImagingServiceResource extends ImageResource {
             final Jp2Header jp2Header = Jp2Header.read(cached);
             final ScaleDims scaleDims = new ScaleDims(jp2Header);
             final Region region = new Region(jp2Header);
-            interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, jp2Header);
 
+            // TODO apply rotation using MatrixRotate on all dimension params ...
+
+            interpretParams(scaleDims, region, xParam, yParam, wParam, hParam, sParam, jp2Header);
 
             return getJpegResponse(jp2Header, region, scaleDims, 0);
 
@@ -61,6 +63,18 @@ public class ImagingServiceResource extends ImageResource {
     private void interpretParams(ScaleDims scaleDims, Region region,
                                  Integer xParam, Integer yParam, Integer wParam, Integer hParam, Double sParam,
                                  Jp2Header jp2Header) {
+
+        // TODO: integrate current if-blocks
+        // TODO: ...then apply apply rotation using MatrixRotate on the requested[XYWH] params...
+        // TODO: ...but before deriving any scale from them !!
+        // TODO: ...and DEFINITELY before checking any bounding-box restrictions!
+
+        // ORDER OF OPERERATIONS is:
+        // 1) rotate the region to be decoded using MatrixRotate
+        // 2) the w and h properties should be swapped (if rot=90|270), because they are 'rotated back' afterwards.
+        // 3) derive the scale based on the rotated region and the unrotated source image
+        // 4) decode this region
+        // 5) rotate this decoded region again
         if (xParam == null && yParam == null && sParam == null) {
             if (hParam == null && wParam == null) {
                 return;
@@ -132,30 +146,4 @@ public class ImagingServiceResource extends ImageResource {
         scaleDims.setW(wParam);
         scaleDims.setH((int) Math.round(jp2Header.getY1() * ((double) wParam / (double) jp2Header.getX1())));
     }
-
-
-    /*
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&w=134",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?r=0&s=0.02732919254658385&id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.03603192702394527&x=0&y=0&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.03603192702394527&x=0&y=0&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.0396351197263398&x=0&y=11&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.04795849486887116&x=0&y=39&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.2666452659504655&x=0&y=758&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4&r=90",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?r=90&s=0.020068415051311288&id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=90&s=0.2666452659504655&x=0&y=758&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=90&s=0.2666452659504655&x=0&y=758&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4&r=90",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=90&s=0.2666452659504655&x=0&y=758&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=90&s=0.2666452659504655&x=247&y=693&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4&r=0",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?r=0&s=0.02732919254658385&id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.2666452659504655&x=0&y=693&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.2666452659504655&x=0&y=693&w=1416&h=237",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&s=0.4&r=0",
-  "url": "https://imageviewer.kb.nl/ImagingService/imagingService?id=ddd%3A010691737%3Ampeg21%3Ap001%3Aimage&r=0&s=0.2666452659504655&x=0&y=693&w=1416&h=237",
-                      */
 }

@@ -38,7 +38,7 @@ public class BufferedImageWriter {
             resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
             return resizeOp.filter(inImage, null);
         }
-/* bicubic downsampling
+/* non-fancy downsampling
         int[] rawOutput = new int[newWidth*newHeight];
 
         // YD compensates for the x loop by subtracting the width back out
