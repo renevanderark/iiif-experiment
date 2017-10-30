@@ -1,6 +1,7 @@
 package nl.kb.iiif;
 
 import nl.kb.image.BufferedImageWriter;
+import nl.kb.jp2.DecodedImage;
 import nl.kb.jp2.Jp2Decode;
 import nl.kb.jp2.Jp2Header;
 import nl.kb.utils.NativeUtils;
@@ -56,7 +57,7 @@ public class SampleTestRunner {
 
             final int w = jp2Header.getX1();
             final int h = jp2Header.getY1();
-            final int[][] bands = Jp2Decode.decodeArea(jp2Header, 0, 0, w, h, cp_reduce);
+            final DecodedImage decodedImage = Jp2Decode.decodeArea(jp2Header, 0, 0, w, h, cp_reduce);
             System.out.println(file + ": " + (System.currentTimeMillis() - before) + "ms: decode");
 
             before = System.currentTimeMillis();
@@ -64,7 +65,9 @@ public class SampleTestRunner {
             final int reducedW = reduce(w, cp_reduce);
             final int reducedH = reduce(h, cp_reduce);
             BufferedImage img = BufferedImageWriter
-                    .fromRaw(bands, reducedW, reducedH, (int)(reducedW * 0.1), (int)(reducedH * 0.1), 0);
+                    .fromRaw(decodedImage.getColorBands(), 
+                            decodedImage.getDecodedImageDims().getWidth(), decodedImage.getDecodedImageDims().getHeight(),
+                            (int)(reducedW * 0.1), (int)(reducedH * 0.1), 0);
 
             System.out.println(file + ": " + (System.currentTimeMillis() - before) + "ms: to buffered image");
             ImageIO.write(img, "jpg", new File("output/" +

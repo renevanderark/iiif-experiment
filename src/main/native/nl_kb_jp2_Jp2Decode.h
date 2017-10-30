@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     nl_kb_jp2_Jp2Decode
  * Method:    decodeJp2Area
- * Signature: (Ljava/lang/String;IIIII[[I)V
+ * Signature: (Ljava/lang/String;IIIII[[I)Lnl/kb/jp2/DecodedImageDims;
  */
-JNIEXPORT void JNICALL Java_nl_kb_jp2_Jp2Decode_decodeJp2Area
+JNIEXPORT jobject JNICALL Java_nl_kb_jp2_Jp2Decode_decodeJp2Area
   (JNIEnv *, jclass, jstring, jint, jint, jint, jint, jint, jobjectArray);
 
 #ifdef __cplusplus

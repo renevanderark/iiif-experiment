@@ -3,7 +3,7 @@ package nl.kb.iiif.resources;
 import nl.kb.iiif.api.Region;
 import nl.kb.iiif.api.ScaleDims;
 import nl.kb.image.BufferedImageWriter;
-import nl.kb.jp2.DimReducer;
+import nl.kb.jp2.DecodedImage;
 import nl.kb.jp2.Jp2Decode;
 import nl.kb.jp2.Jp2Header;
 
@@ -38,10 +38,10 @@ class ImageResource {
         }
 
         // TODO: get exact width/height of decoded image via a return object... pass those along to fromRaw
-        final int[][] colorBands = Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce);
+        final DecodedImage decodedImage = Jp2Decode.decodeArea(jp2Header, region.getX(), region.getY(), region.getW(), region.getH(), cp_reduce);
         final BufferedImage image = BufferedImageWriter.fromRaw(
-                colorBands,
-                DimReducer.reduce(region.getW(), cp_reduce), DimReducer.reduce(region.getH(), cp_reduce),
+                decodedImage.getColorBands(),
+                decodedImage.getDecodedImageDims().getWidth(), decodedImage.getDecodedImageDims().getHeight(),
                 scaleDims.getW(), scaleDims.getH(), deg
         );
 
