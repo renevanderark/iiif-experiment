@@ -67,12 +67,12 @@ public class ImagingServiceResource extends ImageResource {
                                  Integer rParam, Jp2Header jp2Header) {
 
         if (xParam == null && yParam == null && sParam == null) {
-            interpretFullRegionParams(scaleDims, wParam, hParam, rParam, jp2Header);
+            interpretFullRegionParams(scaleDims, wParam, hParam, rParam == null ? 0 : rParam, jp2Header);
         } else {
             rParam = rParam == null ? 0 : rParam;
             sParam = sParam == null ? 1.0 : sParam;
-            final int requestedX = xParam == null ? 0 : xParam;
-            final int requestedY = yParam == null ? 0 : yParam;
+            final int requestedX = xParam == null || xParam < 0 ? 0 : xParam;
+            final int requestedY = yParam == null || yParam < 0 ? 0 : yParam;
             final int requestedW = wParam == null ? (int) Math.round(jp2Header.getX1() * sParam) : wParam;
             final int requestedH = hParam == null ? (int) Math.round(jp2Header.getY1() * sParam) : hParam;
 
