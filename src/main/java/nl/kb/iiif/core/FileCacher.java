@@ -2,6 +2,7 @@ package nl.kb.iiif.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toSet;
@@ -43,9 +45,17 @@ public class FileCacher {
     }
 
     private final Map<String, CacheStats> cacheMap = new ConcurrentHashMap<>();
+    private final Set<String> locks = new ConcurrentHashSet<>();
 
     File fetchLocal(String identifier) {
         final String filename = new String(Base64.getEncoder().encode(identifier.getBytes()));
+        while (locks.contains(filename)) {
+            try {
+                Thread.sleep(50L);
+            } catch (InterruptedException e) {
+
+            }
+        }
         final File file = new File(String.format("%s/%s", cacheDir, filename));
         if (file.exists()) {
             cacheMap.put(filename, new CacheStats(file.length()));
@@ -54,8 +64,15 @@ public class FileCacher {
     }
 
     public void save(InputStream is, File file) throws IOException {
-        IOUtils.copy(is, new FileOutputStream(file));
-        cacheMap.put(file.getName(), new CacheStats(file.length()));
+        locks.add(file.getName());
+        try {
+            IOUtils.copy(is, new FileOutputStream(file));
+            cacheMap.put(file.getName(), new CacheStats(file.length()));
+        } catch (IOException e) {
+            locks.remove(file.getName());
+            throw e;
+        }
+        locks.remove(file.getName());
     }
 
     public void clear(String identifier, boolean encode) {
