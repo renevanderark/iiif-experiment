@@ -17,7 +17,7 @@ logging:
 
 
 cache:
-  dir: "/home/rar010/research/iiif-experiment/cache"
+  dir: "/cache"
   expireMinutes: 600000
   maxSizeMB: 1024
 
