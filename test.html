@@ -30,11 +30,11 @@
     });
     var urn = document.location.href.split("?urn=")[1];
     if (urn) {
-        L.tileLayer.iiif('http://10.101.21.200:8080/iiif-service/' + urn + '/info.json', {
+        L.tileLayer.iiif('http://imageviewer-iiif.kbresearch.nl/iiif-service/' + urn + '/info.json', {
             tileSize: 512
         }).addTo(map);
     } else {
-        L.tileLayer.iiif('http://10.101.21.200:8080/iiif-service/ddd:010691737:mpeg21:p001:image/info.json', {
+        L.tileLayer.iiif('http://imageviewer-iiif.kbresearch.nl/iiif-service/ddd:010691737:mpeg21:p001:image/info.json', {
         }).addTo(map);
     }
 </script>

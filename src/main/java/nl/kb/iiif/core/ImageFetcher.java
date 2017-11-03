@@ -19,6 +19,14 @@ public class ImageFetcher {
 
 
     public File fetch(String identifier) throws IOException {
+        if (identifier.startsWith("file://")) {
+            final File file = new File(identifier.replace("file://", ""));
+            if (file.exists()) {
+                return file;
+            } else {
+                throw new IOException("File " + identifier + " does not exist");
+            }
+        }
         final File file = fileCacher.fetchLocal(identifier);
         if (file.exists()) {
             // TODO BUMP TIMEOUT
