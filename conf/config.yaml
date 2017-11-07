@@ -29,7 +29,7 @@ httpClient:
     trustSelfSignedCertificates: true
 
 cache:
-  dir: "./cache"
+  dir: "/cache"
   expireMinutes: 600000
   maxSizeMB: 1024
 

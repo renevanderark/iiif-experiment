@@ -41,6 +41,6 @@ RUN git checkout tags/v1.0
 
 RUN mvn clean package -Dopenjpeg.version=2.3
 
-CMD PORT=8080 java -jar target/iiif-jp2-1.0-SNAPSHOT.jar server config.yaml
+CMD PORT=8080 java -jar target/iiif-jp2-1.0.jar server /conf/config.yaml
 
 
