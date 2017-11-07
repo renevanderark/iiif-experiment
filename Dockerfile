@@ -36,9 +36,9 @@ RUN ldconfig
 RUN mkdir "/cache"
 WORKDIR "/"
 RUN git clone https://github.com/renevanderark/iiif-experiment
+WORKDIR "/iiif-experiment"
 RUN git checkout tags/v1.0
 
-WORKDIR "/iiif-experiment"
 RUN mvn clean package -Dopenjpeg.version=2.3
 
 CMD PORT=8080 java -jar target/iiif-jp2-1.0-SNAPSHOT.jar server config.yaml
