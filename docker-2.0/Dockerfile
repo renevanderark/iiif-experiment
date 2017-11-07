@@ -36,6 +36,7 @@ RUN ldconfig
 RUN mkdir "/cache"
 WORKDIR "/"
 RUN git clone https://github.com/renevanderark/iiif-experiment
+RUN git checkout tags/v1.0
 WORKDIR "/iiif-experiment"
 
 RUN mvn clean package -Dopenjpeg.version=2.0
