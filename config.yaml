@@ -15,12 +15,6 @@ logging:
   level: INFO
 
 
-
-cache:
-  dir: "/cache"
-  expireMinutes: 600000
-  maxSizeMB: 1024
-
 httpClient:
   timeout: 5000ms
   connectionTimeout: 5000ms
@@ -32,4 +26,11 @@ httpClient:
   retries: 3
   tls:
     verifyHostname: false
-    trustSelfSignedCertificates: true # WARNING!!! DO NOT USE IN PRODUCTION, USE SOMETHING LIKE THIS:
+    trustSelfSignedCertificates: true
+
+cache:
+  dir: "./cache"
+  expireMinutes: 600000
+  maxSizeMB: 1024
+
+resolverFormat: "http://resolver.kb.nl/resolve?urn=%s"

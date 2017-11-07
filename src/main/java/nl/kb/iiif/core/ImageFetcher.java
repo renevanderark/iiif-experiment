@@ -10,11 +10,12 @@ import java.io.IOException;
 public class ImageFetcher {
     private final HttpClient httpClient;
     private final FileCacher fileCacher;
+    private final String resolverFormat;
 
-    public ImageFetcher(HttpClient httpClient, FileCacher fileCacher) {
+    public ImageFetcher(HttpClient httpClient, FileCacher fileCacher, String resolverFormat) {
         this.httpClient = httpClient;
         this.fileCacher = fileCacher;
-        //TODO: add cache expirer
+        this.resolverFormat = resolverFormat;
     }
 
 
@@ -29,11 +30,10 @@ public class ImageFetcher {
         }
         final File file = fileCacher.fetchLocal(identifier);
         if (file.exists()) {
-            // TODO BUMP TIMEOUT
             return file;
         }
 
-        final HttpResponse resp = httpClient.execute(new HttpGet(String.format("http://resolver.kb.nl/resolve?urn=%s", identifier)));
+        final HttpResponse resp = httpClient.execute(new HttpGet(String.format(resolverFormat, identifier)));
         fileCacher.save(resp.getEntity().getContent(), file);
 
         return file;

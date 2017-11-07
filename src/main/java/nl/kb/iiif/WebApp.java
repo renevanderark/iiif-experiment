@@ -49,7 +49,7 @@ public class WebApp  extends Application<Config> {
 
 
         final FileCacher fileCacher = config.getFileCacher();
-        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, fileCacher);
+        final ImageFetcher imageFetcher = new ImageFetcher(httpClient, fileCacher, config.getResolverFormat());
         environment.jersey().register(new IIIFServiceResource(imageFetcher));
         environment.jersey().register(new ImagingServiceResource(imageFetcher));
 
