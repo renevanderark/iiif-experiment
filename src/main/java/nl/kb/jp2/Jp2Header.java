@@ -21,7 +21,7 @@ public class Jp2Header {
         return x1;
     }
 
-    private void setX1(int x1) {
+    public void setX1(int x1) {
         this.x1 = x1;
     }
 
@@ -29,7 +29,7 @@ public class Jp2Header {
         return y1;
     }
 
-    private void setY1(int y1) {
+    public void setY1(int y1) {
         this.y1 = y1;
     }
 
@@ -37,7 +37,7 @@ public class Jp2Header {
         return tw;
     }
 
-    private void setTw(int tw) {
+    public void setTw(int tw) {
         this.tw = tw;
     }
 
@@ -45,7 +45,7 @@ public class Jp2Header {
         return th;
     }
 
-    private void setTh(int th) {
+    public void setTh(int th) {
         this.th = th;
     }
 
@@ -53,7 +53,7 @@ public class Jp2Header {
         return tdx;
     }
 
-    private void setTdx(int tdx) {
+    public void setTdx(int tdx) {
         this.tdx = tdx;
     }
 
@@ -61,7 +61,7 @@ public class Jp2Header {
         return tdy;
     }
 
-    private void setTdy(int tdy) {
+    public void setTdy(int tdy) {
         this.tdy = tdy;
     }
 
@@ -69,7 +69,7 @@ public class Jp2Header {
         return numRes;
     }
 
-    private void setNumRes(int numRes) {
+    public void setNumRes(int numRes) {
         this.numRes = numRes;
     }
 
@@ -77,11 +77,11 @@ public class Jp2Header {
         return numComps;
     }
 
-    private void setNumComps(int numComps) {
+    public void setNumComps(int numComps) {
         this.numComps = numComps;
     }
 
-    private void setFileName(String fileName) {
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
