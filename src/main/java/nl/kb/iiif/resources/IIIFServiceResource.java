@@ -53,7 +53,7 @@ public class IIIFServiceResource extends ImageResource {
     }
 
     @GET
-    @Path("/{region}/{size}/{rotation}/default.jpg")
+    @Path("/{region}/{size}/{rotation}/{format}.jpg")
     @Produces("image/jpeg")
     public Response decode(@PathParam("identifier") String identifier,
         @PathParam("region") String regionParam,
